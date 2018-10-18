@@ -101,7 +101,8 @@ func (m *serviceMap) register(rcvr interface{}, name string) error {
 		if returnType := mtype.Out(0); returnType != typeOfError {
 			continue
 		}
-		s.methods[method.Name] = &serviceMethod{
+		methodName := lowerFirstChar(method.Name)
+		s.methods[methodName] = &serviceMethod{
 			method:    method,
 			argsType:  args.Elem(),
 			replyType: reply.Elem(),
@@ -127,7 +128,7 @@ func (m *serviceMap) register(rcvr interface{}, name string) error {
 //
 // The method name uses a dotted notation as in "Service.Method".
 func (m *serviceMap) get(method string) (*service, *serviceMethod, error) {
-	parts := strings.Split(method, ".")
+	parts := strings.Split(method, "_")
 	if len(parts) != 2 {
 		err := fmt.Errorf("rpc: service/method request ill-formed: %q", method)
 		return nil, nil, err
@@ -139,7 +140,8 @@ func (m *serviceMap) get(method string) (*service, *serviceMethod, error) {
 		err := fmt.Errorf("rpc: can't find service %q", method)
 		return nil, nil, err
 	}
-	serviceMethod := service.methods[parts[1]]
+	methodName := lowerFirstChar(parts[1])
+	serviceMethod := service.methods[methodName]
 	if serviceMethod == nil {
 		err := fmt.Errorf("rpc: can't find method %q", method)
 		return nil, nil, err
@@ -161,4 +163,15 @@ func isExportedOrBuiltin(t reflect.Type) bool {
 	// PkgPath will be non-empty even for an exported type,
 	// so we need to check the type name as well.
 	return isExported(t.Name()) || t.PkgPath() == ""
+}
+
+// lowerFirstChar lower the first character of func name
+func lowerFirstChar(str string) string {
+	if len(str) <= 1 {
+		return strings.ToLower(str)
+	}
+	if str[0] >= 'A' && str[0] <= 'Z' {
+		return string(str[0]+'a'-'A') + str[1:]
+	}
+	return str
 }

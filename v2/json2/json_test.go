@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/gorilla/rpc/v2"
+	"github.com/m3ngyang/rpc/v2"
 )
 
 // ResponseRecorder is an implementation of http.ResponseWriter that
@@ -142,14 +142,14 @@ func TestService(t *testing.T) {
 	s.RegisterService(new(Service1), "")
 
 	var res Service1Response
-	if err := execute(t, s, "Service1.Multiply", &Service1Request{4, 2}, &res); err != nil {
+	if err := execute(t, s, "Service1_multiply", &Service1Request{4, 2}, &res); err != nil {
 		t.Error("Expected err to be nil, but got:", err)
 	}
 	if res.Result != 8 {
 		t.Errorf("Wrong response: %v.", res.Result)
 	}
 
-	if err := execute(t, s, "Service1.ResponseError", &Service1Request{4, 2}, &res); err == nil {
+	if err := execute(t, s, "Service1_responseError", &Service1Request{4, 2}, &res); err == nil {
 		t.Errorf("Expected to get %q, but got nil", ErrResponseError)
 	} else if err.Error() != ErrResponseError.Error() {
 		t.Errorf("Expected to get %q, but got %q", ErrResponseError, err)
@@ -157,7 +157,7 @@ func TestService(t *testing.T) {
 
 	// No parameters.
 	res = Service1Response{}
-	if err := executeRaw(t, s, &Service1NoParamsRequest{"2.0", "Service1.Multiply", 1}, &res); err != nil {
+	if err := executeRaw(t, s, &Service1NoParamsRequest{"2.0", "Service1_multiply", 1}, &res); err != nil {
 		t.Error(err)
 	}
 	if res.Result != Service1DefaultResponse {
@@ -173,7 +173,7 @@ func TestService(t *testing.T) {
 		}{{
 			T: "test",
 		}},
-		M:  "Service1.Multiply",
+		M:  "Service1_multiply",
 		ID: 1,
 	}
 	if err := executeRaw(t, s, &req, &res); err != nil {
