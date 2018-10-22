@@ -61,6 +61,7 @@ type Server struct {
 	interceptFunc func(i *RequestInfo) *http.Request
 	beforeFunc    func(i *RequestInfo)
 	afterFunc     func(i *RequestInfo)
+	allowCORS     bool
 }
 
 // RegisterCodec adds a new codec to the server.
@@ -130,8 +131,22 @@ func (s *Server) HasMethod(method string) bool {
 	return false
 }
 
-// ServeHTTP
+// SetCORS sets CORS property
+func (s *Server) SetCORS(allow bool) {
+	s.allowCORS = allow
+}
+
+// ServeHTTP starts http service
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Options responds to the OPTIONS HTTP method by returning a 200 OK response
+	// with the "Access-Control-Allow-Headers" header set to "Content-Type"
+	if r.Method == "OPTIONS" {
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	if r.Method != "POST" {
 		WriteError(w, 405, "rpc: POST method required, received "+r.Method)
 		return
@@ -207,6 +222,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Prevents Internet Explorer from MIME-sniffing a response away
 	// from the declared content-type
 	w.Header().Set("x-content-type-options", "nosniff")
+	if s.allowCORS {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
 	// Encode the response.
 	if errResult == nil {
 		codecReq.WriteResponse(w, reply.Interface())
