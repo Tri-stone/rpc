@@ -13,7 +13,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/m3ngyang/rpc/v2"
+	"github.com/Tri-stone/rpc/v2"
 )
 
 var null = json.RawMessage([]byte("null"))

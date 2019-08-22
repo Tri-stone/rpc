@@ -10,8 +10,8 @@ To register the codec in a RPC server:
 
 	import (
 		"http"
-		"github.com/m3ngyang/rpc"
-		"github.com/m3ngyang/rpc/json"
+		"github.com/Tri-stone/rpc"
+		"github.com/Tri-stone/rpc/json"
 	)
 
 	func init() {

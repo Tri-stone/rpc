@@ -20,8 +20,8 @@ Let's setup a server and register a codec and service:
 
 	import (
 		"http"
-		"github.com/m3ngyang/rpc"
-		"github.com/m3ngyang/rpc/json"
+		"github.com/Tri-stone/rpc"
+		"github.com/Tri-stone/rpc/json"
 	)
 
 	func init() {

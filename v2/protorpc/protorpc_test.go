@@ -14,7 +14,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/m3ngyang/rpc/v2"
+	"github.com/Tri-stone/rpc/v2"
 )
 
 const jsonContentType = "application/json; charset=utf-8"
